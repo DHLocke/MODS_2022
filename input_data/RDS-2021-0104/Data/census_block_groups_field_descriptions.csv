@@ -1,0 +1,36 @@
+column number,name,alilas,definition,source
+1,rowname,rowname,row name,internal
+2,GEOID,GEOID,geographic identifier,Census
+3,tot_pop,tot_pop,total population,Census
+4,medncmE,medincomeE,median household income,Census
+5,pct_wht,pct_white,percent white,
+6,pct_blc,pct_black,percent Black or African American,
+7,pct_m_n,pct_am_ind,percent American Indian and Alaska Native,
+8,pct_asn,pct_asian,percent Asian,
+9,pct_pc_,pct_pac_is,percent Native Hawaiian and Other Pacific Islander,
+10,pct_th_,pct_other_r,percent Some other race,
+11,pct_wn_,pct_own_occ,percent of occupied homes that are owner occupied,
+12,pct_vac,pct_vac,percent of homes that are vacant,
+13,pct_edu,pct_edu,"percent of the 25 years and older population with a highschool diploma, equivilent or greater educational attainment",
+14,gi_cnts,gi_counts,Green Infrastructure Counts,Original
+15,id,id,same as rowname,
+16,a_tree,a_tree,area of tree (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+17,a_grass,a_grass,area of grass/shrub (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+18,a_soil,a_soil,area of soil (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+19,a_water,a_water,area of water (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+20,a_bldng,a_building,area of building (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+21,a_road,a_road,area of road (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+22,a_thr_p,a_other_paved,area of other paved (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+23,a_total,a_total,total area,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+24,p_tree,p_tree,percent tree canopy cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+25,p_grass,p_grass,percent grass/shrub cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+26,p_soil,p_soil,percent soil cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+27,p_water,p_water,percent water cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+28,p_bldng,p_building,percent building cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+29,p_road,p_road,percent road cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+30,p_thr_p,p_other_paved,percent other paved cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+31,ImpS...,Impervious Surface (%),percent impervious surface cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+32,g_pr_cp,gi_per_cap,Green Infrastructure Per Capita,Original / Derived
+33,g__1000,gi_per_1000,Green Infrastructure Per 1000 persons,Original / Derived
+34,expectd,expected,expected GI counts under the scenario that installations are proportional to population (eg Odds Ratio = 1),Original / Derived
+35,std_rat,std_rate,"standardized rate is the overall GSI uptake rate (so GSI divided by population = r), then the standardized rate is population of each polygon (block group or neighborhood) times r. Population * r = standardized rate",Original / Derived

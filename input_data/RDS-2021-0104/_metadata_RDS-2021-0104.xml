@@ -1,0 +1,514 @@
+<?xml-stylesheet href='NBII_classic.xsl'  type='text/xsl'?>
+<metadata>
+  <idinfo>
+    <citation>
+      <citeinfo>
+        <origin>Locke, Dexter H.</origin>
+        <pubdate>2022</pubdate>
+        <title>Green stormwater infrastructure in New Haven, Connecticut and socioeconomic variables within neighborhoods and census block groups</title>
+        <geoform>vector digital data</geoform>
+        <pubinfo>
+          <pubplace>Fort Collins, CO</pubplace>
+          <publish>Forest Service Research Data Archive</publish>
+        </pubinfo>
+        <onlink>https://doi.org/10.2737/RDS-2021-0104</onlink>
+      </citeinfo>
+    </citation>
+    <descript>
+      <abstract>Green infrastructure increasingly is used to ameliorate water quality and quantity problems caused by runoff in cities. Studies show how the spatial distribution of these Green Stormwater Infrastructure (GSI) sites are unevenly distributed relative to socioeconomic and demographic groups. Often this is described as an indicator of perpetuated environment injustice, given the purported social and environmental benefits of GSI. To assess equity, researchers often examine either who gets what with respect to environmental ‘goods’ such as tree canopy and other green infrastructures, or investigate the procedures, decision making processes, and power structures pertaining to planning processes. 
+	  
+The data publication contains GSI location data collected from 2013-2021. It also contains information regarding who lives in nearby New Haven, Connecticut. Specifically, these data include four (4) vector polygon shapefiles representing census block groups, neighborhoods, sewer, and watershed outlines and two (2) point shapefiles representing green infrastructure and combined sewer overflow locations. An R Markdown (.rmd) file is also included containing analysis steps.</abstract>
+      <purpose>The intention of providing these data is to accelerate and enable other future researchers interested in GSI and Environmental Justice, and to allow students to access data for use in classes in geographic information systems, urban studies, statistics, environmental justice, and related.</purpose>
+      <supplinf>For more information about this study and these data see Locke et al. (2021).</supplinf>
+    </descript>
+    <timeperd>
+      <timeinfo>
+        <rngdates>
+          <begdate>2013</begdate>
+          <enddate>2021</enddate>
+        </rngdates>
+      </timeinfo>
+      <current>Publication date</current>
+    </timeperd>
+    <status>
+      <progress>Complete</progress>
+      <update>None planned</update>
+    </status>
+    <spdom>
+      <bounding>
+        <westbc>-72.99805</westbc>
+        <eastbc>-72.86031</eastbc>
+        <northbc>41.35039</northbc>
+        <southbc>41.24644</southbc>
+      </bounding>
+      <descgeog>city of New Haven, Connecticut</descgeog>
+    </spdom>
+    <keywords>
+      <theme>
+        <themekt>None</themekt>
+        <themekey>urban ecology</themekey>
+        <themekey>green infrastructure</themekey>
+        <themekey>GI</themekey>
+        <themekey>green stormwater infrastructure</themekey>
+        <themekey>GSI</themekey>
+        <themekey>environmental justice</themekey>
+        <themekey>EJ</themekey>
+        <themekey>spatial analysis</themekey>
+      </theme>
+      <theme>
+        <themekt>ISO 19115 Topic Category</themekt>
+        <themekey>boundaries</themekey>
+        <themekey>environment</themekey>
+        <themekey>structure</themekey>
+      </theme>
+      <theme>
+        <themekt>National Research &amp; Development Taxonomy</themekt>
+        <themekey>Ecology, Ecosystems, &amp; Environment</themekey>
+        <themekey>Geography</themekey>
+        <themekey>Environment and People</themekey>
+        <themekey>Decision making, public involvement</themekey>
+        <themekey>Social values, ethics</themekey>
+        <themekey>Urban natural resources management</themekey>
+      </theme>
+      <place>
+        <placekt>None</placekt>
+        <placekey>New Haven</placekey>
+        <placekey>Connecticut</placekey>
+      </place>
+    </keywords>
+    <accconst>None</accconst>
+    <useconst>These data were collected using funding from the U.S. Government and can be used without additional permissions or fees. If you use these data in a publication, presentation, or other research product please use the following citation:
+
+Locke, Dexter H. 2022. Green stormwater infrastructure in New Haven, Connecticut and socioeconomic variables within neighborhoods and census block groups. Fort Collins, CO: Forest Service Research Data Archive. https://doi.org/10.2737/RDS-2021-0104</useconst>
+    <ptcontac>
+      <cntinfo>
+        <cntperp>
+          <cntper>Dexter H. Locke, PhD</cntper>
+          <cntorg>USDA Forest Service, Northern Research Station</cntorg>
+        </cntperp>
+        <cntaddr>
+          <addrtype>mailing and physical</addrtype>
+          <address>5523 Research Park Drive</address>
+          <city>Halethorpe</city>
+          <state>MD</state>
+          <postal>21227</postal>
+          <country>USA</country>
+        </cntaddr>
+        <cntvoice>310-463-6202</cntvoice>
+        <cntpos>Research Social Scientist</cntpos>
+        <cntemail>dexter.locke@usda.gov; dexter.locke@gmail.com</cntemail>
+      </cntinfo>
+    </ptcontac>
+    <datacred>This project was funded by the USDA Forest Service, Northern Research Station. 
+	
+
+Author Information:
+
+Locke, Dexter H.
+USDA Forest Service, Northern Research Station
+https://orcid.org/0000-0003-2704-9720</datacred>
+    <native>The R Markdown file was written in R version 4.0.3 (2020-10-10), Platform: x86_64-apple-darwin17.0 (64-bit), Running under: macOS  11.2.3.</native>
+    <crossref>
+      <citeinfo>
+        <origin>Locke, Dexter H.</origin>
+        <origin>Phillips de Lucas, Amanda K.</origin>
+        <origin>Murphy-Dunning, Colleen</origin>
+        <origin>Henning, Dawn</origin>
+        <origin>Zinn, Giovanni</origin>
+        <pubdate>2021</pubdate>
+        <title>Contextual considerations of green stormwater infrastructure siting</title>
+        <geoform>journal article</geoform>
+        <serinfo>
+          <sername>Cities and the Environment</sername>
+          <issue>14(2): 2</issue>
+        </serinfo>
+        <onlink>https://doi.org/10.15365/cate.2021.140202</onlink>
+        <onlink>https://digitalcommons.lmu.edu/cate/vol14/iss2/2</onlink>
+      </citeinfo>
+    </crossref>
+    <tool>
+      <tooldesc>R is a free software environment for statistical computing and graphics. R Markdown is a way to combine and save R code as well as generate high quality reports.</tooldesc>
+      <toolcite>
+        <citeinfo>
+          <origin>R Core Team</origin>
+          <pubdate>2021</pubdate>
+          <title>R: A language and environment for statistical computing</title>
+          <geoform>software</geoform>
+          <pubinfo>
+            <pubplace>Vienna, Austria</pubplace>
+            <publish>R Foundation for Statistical Computing</publish>
+          </pubinfo>
+          <onlink>https://www.r-project.org/</onlink>
+        </citeinfo>
+      </toolcite>
+      <toolacc>
+        <onlink>https://www.r-project.org/; https://rmarkdown.rstudio.com/</onlink>
+        <toolinst>See website for information.</toolinst>
+      </toolacc>
+    </tool>
+  </idinfo>
+  <dataqual>
+    <attracc>
+      <attraccr>Because of New Haven’s relatively small geographic and population size (relative to other often-studied areas), and the few green stormwater infrastructure (GSI) actors on the scene, we can be reasonably confident that the entire universe of street-side bioswales are accounted for.
+	  	  
+Census has its margins of error, the land cover is documented elswhere, the GSI points are accurate enough to land in the correct neighobrhood or block group via a spatial join. As described in Locke et al. (2021), we manually reassigned three points from an industrial area (Long Warf) to the adjacent neighborhood.	  
+
+Locke, Dexter H.; Phillips de Lucas, Amanda K.; Murphy-Dunning, Colleen; Henning, Dawn; Zinn, Giovanni. 2021. Contextual considerations of green stormwater infrastructure siting. Cities and the Environment 4(2): 2. https://doi.org/10.15365/cate.2021.140202
+	  </attraccr>
+    </attracc>
+    <logic>These data are logically consistent. The consistency was verified as part of the quality assurance that occurred during data analysis.</logic>
+    <complete>No known ommissions or missing data.</complete>
+    <lineage>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>DataHaven</origin>
+            <pubdate>2019</pubdate>
+            <title>2019 city neighborhood profiles</title>
+            <geoform>tabular digital data</geoform>
+            <othercit>[Accessed 04 February 2020]</othercit>
+            <onlink>https://www.ctdatahaven.org/data-resources/connecticut-city-neighborhood-profiles</onlink>
+            <onlink>https://www.ctdatahaven.org/</onlink>
+          </citeinfo>
+        </srccite>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>2010</begdate>
+              <enddate>2019</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>Publication Date</srccurr>
+        </srctime>
+        <srccitea>DataHaven</srccitea>
+        <typesrc>Digital database File</typesrc>
+        <srccontr>Neighborhood boundaries and demographic data were obtained from DataHaven.</srccontr>
+      </srcinfo>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>Walker, K.</origin>
+            <pubdate>2020</pubdate>
+            <title>tidycensus: Load US Census boundary and attribute data as “tidyverse” and ’sf’-ready data frames</title>
+            <geoform>tabular digital data</geoform>
+            <onlink>https://cran.r-project.org/package=tidycensus</onlink>
+          </citeinfo>
+        </srccite>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>2015</begdate>
+              <enddate>2019</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>Publication Date</srccurr>
+        </srctime>
+        <srccitea>Census; Walker (2020)</srccitea>
+        <typesrc>Online</typesrc>
+        <srccontr>Census block group geographic boundaries, socioeconomic, and demographic data for the U.S. Census Bureau’s 2015-2019 5-year American Community Survey were accessed via the tidycensus R package using the `get_acs` function (Walker, 2020).</srccontr>
+      </srcinfo>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>City of New Haven’s Engineering Department</origin>
+            <pubdate>Unknown</pubdate>
+            <title>Green Stormwater Infrastructure</title>
+            <geoform>database</geoform>
+            <pubinfo>
+              <pubplace>New Haven, CT</pubplace>
+              <publish>City of New Haven’s Engineering Department</publish>
+            </pubinfo>
+          </citeinfo>
+        </srccite>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>2013</begdate>
+              <enddate>2021</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>Publication Date</srccurr>
+        </srctime>
+        <srccitea>GSI geodatabase</srccitea>
+        <typesrc>Online</typesrc>
+        <srccontr>Green infrastructure locations and other GSI data were obtained from the City of New Haven’s Engineering Department which has a Green Stormwater Infrastructure (GSI) geodatabase.</srccontr>
+      </srcinfo>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>South Central Regional Council of Governments (SCRCOG)</origin>
+            <pubdate>Unknown</pubdate>
+            <title>SCRCOG Geographic Information System land cover data</title>
+            <geoform>raster digital data</geoform>
+            <pubinfo>
+              <publish>South Central Regional Council of Governments</publish>
+            </pubinfo>
+            <onlink>https://seccog.org</onlink>
+          </citeinfo>
+        </srccite>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>2013</begdate>
+              <enddate>2021</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>Publication Date</srccurr>
+        </srctime>
+        <srccitea>SCRCOG</srccitea>
+        <typesrc>Online</typesrc>
+        <srccontr>High-resolution land cover obtained from South Central Regional Council of Governments (SCRCOG) was used to help derive land cover variables included in this data package.</srccontr>
+      </srcinfo>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>University of Vermont Spatial Analysis Lab</origin>
+            <pubdate>Unknown</pubdate>
+            <title>UMV SAL land cover data</title>
+            <geoform>raster digital data</geoform>
+            <pubinfo>
+              <publish>University of Vermont Spatial Analysis Lab</publish>
+            </pubinfo>
+            <onlink>https://site.uvm.edu/sal/</onlink>
+            <onlink>https://uvm.maps.arcgis.com/apps/webappviewer/index.html?id=fe15424caceb4dd294be816581ec2d77</onlink>
+          </citeinfo>
+        </srccite>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>2013</begdate>
+              <enddate>2021</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>Publication Date</srccurr>
+        </srctime>
+        <srccitea>UVM SAL</srccitea>
+        <typesrc>Online</typesrc>
+        <srccontr>High-resolution land cover obtained from the University of Vermont (UVM) Spatial Analysis Laboratory (SAL) was used to help derive land cover variables included in this data package.</srccontr>
+      </srcinfo>
+      <procstep>
+        <srcused>GSI geodatabase</srcused>
+        <procdesc>The City of New Haven’s Engineering Department uses GIS as a data management tool for its Green Stormwater Infrastructure installations. The GSI geodatabase was created using three different methods. For the smaller projects (less than 10 GSI), points were created using ArcMap/ArcGIS Pro desktop version. They created points with attributes that were removed to create "gi_cartographic.shp".</procdesc>
+        <procdate>Unknown</procdate>
+      </procstep>
+      <procstep>
+        <srcused>Census; Walker (2020)</srcused>
+        <procdesc>The shapefile "census_block_groups.shp" was created using tidycensus::get_acs function in R.</procdesc>
+        <procdate>Unknown</procdate>
+      </procstep>
+      <procstep>
+        <srcused>DataHaven</srcused>
+        <procdesc>The shapefile "neighborhoods.shp" boundaries and demographic data came from DataHaven. DataHaven is a non-profit organization based in New Haven that developed neighborhood boundaries with the city in 2012, in order to support the Comprehensive Plan Data Book. Most of the neighborhood boundaries align with 2010 Census tract boundaries, but there are a few instances where Census tracts or block groups are split, to better match locally-relevant understandings of neighborhoods. DataHaven created neighborhood estimates by allocating Census data to corresponding neighborhoods using the share of population or households that fell within each geographic area. The very small number of people and households living within the boundaries of the city’s Long Wharf neighborhood, which is predominantly a commercial and industrial area, were automatically assigned to the directly adjacent neighborhood called the Hill.</procdesc>
+        <procdate>Unknown</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>For additional information see Locke et al. (2021).</procdesc>
+        <procdate>Unknown</procdate>
+      </procstep>
+    </lineage>
+  </dataqual>
+  <spdoinfo>
+    <direct>Vector</direct>
+  </spdoinfo>
+  <spref>
+    <horizsys>
+      <planar>
+        <gridsys>
+          <gridsysn>State Plane Coordinate System 1983</gridsysn>
+          <spcs>
+            <lambertc>
+              <stdparll>41.2</stdparll>
+              <stdparll>41.86667</stdparll>
+              <longcm>-72.75</longcm>
+              <latprjo>40.83333</latprjo>
+              <feast>1000000</feast>
+              <fnorth>500000</fnorth>
+            </lambertc>
+          </spcs>
+        </gridsys>
+        <planci>
+          <coordrep>
+            <absres>0.3048006096012192</absres>
+            <ordres>0.3048006096012192</ordres>
+          </coordrep>
+          <plance>Coordinate Pair</plance>
+          <plandu>Survey Feet</plandu>
+        </planci>
+      </planar>
+      <geodetic>
+        <ellips>Geodetic Reference System 80</ellips>
+        <semiaxis>6378137.0000</semiaxis>
+        <horizdn>North American Datum of 1983 (2011)</horizdn>
+        <denflat>298.257222101</denflat>
+      </geodetic>
+    </horizsys>
+  </spref>
+  <eainfo>
+    <overview>
+      <eadetcit>Locke, Dexter H.; Phillips de Lucas, Amanda K.; Murphy-Dunning, Colleen; Henning, Dawn; Zinn, Giovanni. 2021. Contextual considerations of green stormwater infrastructure siting. Cities and the Environment 4(2): 2. https://doi.org/10.15365/cate.2021.140202
+
+DataHaven. 2019. 2019 city neighborhood profiles. DataHaven. https://www.ctdatahaven.org/data-resources/2016-new-haven-neighborhood-profiles [Accessed 04 February 2020]</eadetcit>
+      <eaover>Below you will find a list and description of the files included in this data publication.
+
+
+DESCRIPTION FILES (2)
+
+1. \Data\census_block_groups_field_descriptions.csv: Comma-separated values (CSV) file containing the attributes and attribute definitions of \Data\census_block_groups.shp.
+
+2. \Data\neighborhoods_field_descriptions.csv: Comma-separated values (CSV) file containing the attributes and attribute definitions of \Data\neighborhoods.shp.
+
+Both of these CSV files contain the following:
+column number = Column number
+name = Name of variable
+alias = Variable name, information, or alias from source
+definition = Description of variable (or blank if defined in alias)
+source = Source of variable (Census = Census, DataHaven = DataHaven, internal = assigned internally by author, original = original - as provided/obtained, derived from ... = data derived high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL))
+
+
+DATA FILES (7)
+
+1. \Data\All_Spatial_Data.gpkg: OGC GeoPackage (GPKG) containing all spatial data files (2-7) included in this publication.
+
+2. \Data\census_block_groups.shp: Shapefile (and associated files) containing a vector polygon representation of census block groupings from the U.S. Census within New Haven, Connecticut. A complete description of the attributes in this file are available in \Data\census_block_groups_field_descriptions.csv.
+
+3. \Data\neighborhoods.shp: Shapefile (and associated files) containing a vector polygon representation of neighborhood boundaries in New Haven, Connecticut. A complete description of the attributes in this file are available in \Data\neighborhoods_field_descriptions.csv. (Note: ESRI modifies the variable names, see the *.Rmd file which renames the columns on import.)
+
+For the following data files (4-7), only standard attributes, generated by Esri, are found in each shapefile:
+FID = Numeric identifier automatically generated by Esri
+Shape = Feature geometry automatically generated by Esri
+FID_1 = Numeric identifier automatically generated by Esri
+
+4. \Data\CSOs.shp: Shapefile (and associated files) containing a vector point representation of combined sewer overflow locations.
+
+5. \Data\dt_shed.shp: Shapefile (and associated files) containing a vector polygon representation of the downtown watershed.
+
+6. \Data\gi_catographic.shp: Shapefile (and associated files) containing a vector point representation of green infrastructure locations.
+
+7. \Data\shed_outlines.shp: Shapefile (and associated files) containing a vector polygon representation of sewer watershed outlines.
+
+
+SUPPLEMENTAL FILES (1)
+
+1. \Supplements\New_Haven_GI_CATE.Rmd: R Markdown (RMD) file containing analysis steps used for the original publication.</eaover>
+    </overview>
+  </eainfo>
+  <distinfo>
+    <resdesc>RDS-2021-0104</resdesc>
+    <distrib>
+      <cntinfo>
+        <cntorgp>
+          <cntorg>USDA Forest Service, Research and Development</cntorg>
+        </cntorgp>
+        <cntaddr>
+          <addrtype>mailing and physical</addrtype>
+          <address>240 West Prospect Road</address>
+          <city>Fort Collins</city>
+          <state>CO</state>
+          <postal>80526</postal>
+          <country>USA</country>
+        </cntaddr>
+        <cntvoice>see Contact Instructions</cntvoice>
+        <cntpos>Research Data Archivist</cntpos>
+        <cntinst>This contact information was current as of January 2022. For current information see Contact Us page on: https://doi.org/10.2737/RDS.</cntinst>
+      </cntinfo>
+    </distrib>
+    <stdorder>
+      <digform>
+        <digtinfo>
+          <formvern>see Format Specification</formvern>
+          <formname>SHP</formname>
+          <formspec>Shapefile (and associated files)</formspec>
+          <filedec>Files zipped with 7-Zip 19.0</filedec>
+        </digtinfo>
+        <digtopt>
+          <onlinopt>
+            <computer>
+              <networka>
+                <networkr>https://doi.org/10.2737/RDS-2021-0104</networkr>
+              </networka>
+            </computer>
+          </onlinopt>
+        </digtopt>
+      </digform>
+      <digform>
+        <digtinfo>
+          <formvern>see Format Description</formvern>
+          <formname>GPKG</formname>
+          <formspec>OGC GeoPackage 1.3</formspec>
+          <filedec>Files zipped with 7-Zip 19.0</filedec>
+        </digtinfo>
+        <digtopt>
+          <onlinopt>
+            <computer>
+              <networka>
+                <networkr>https://doi.org/10.2737/RDS-2021-0104</networkr>
+              </networka>
+            </computer>
+          </onlinopt>
+        </digtopt>
+      </digform>
+      <digform>
+        <digtinfo>
+          <formvern>see Format Specification</formvern>
+          <formname>RMD</formname>
+          <formspec>R Markdown (.rmd) file</formspec>
+          <filedec>Files zipped with 7-Zip 19.0</filedec>
+        </digtinfo>
+        <digtopt>
+          <onlinopt>
+            <computer>
+              <networka>
+                <networkr>https://doi.org/10.2737/RDS-2021-0104</networkr>
+              </networka>
+            </computer>
+          </onlinopt>
+        </digtopt>
+      </digform>
+      <digform>
+        <digtinfo>
+          <formvern>see Format Description</formvern>
+          <formname>CSV</formname>
+          <formspec>Comma-separated values file</formspec>
+          <filedec>Files zipped with 7-Zip 19.0</filedec>
+        </digtinfo>
+        <digtopt>
+          <onlinopt>
+            <computer>
+              <networka>
+                <networkr>https://doi.org/10.2737/RDS-2021-0104</networkr>
+              </networka>
+            </computer>
+          </onlinopt>
+        </digtopt>
+      </digform>
+      <fees>None</fees>
+    </stdorder>
+    <distliab>Metadata documents have been reviewed for accuracy and completeness. Unless otherwise stated, all data and related materials are considered to satisfy the quality standards relative to the purpose for which the data were collected. However, neither the author, the Archive, nor any part of the federal government can assure the reliability or suitability of these data for a particular purpose. The act of distribution shall not constitute any such warranty, and no responsibility is assumed for a user's application of these data or related materials.
+
+The metadata, data, or related materials may be updated without notification. If a user believes errors are present in the metadata, data or related materials, please use the information in (1) Identification Information: Point of Contact, (2) Metadata Reference: Metadata Contact, or (3) Distribution Information: Distributor to notify the author or the Archive of the issues.</distliab>
+  </distinfo>
+  <metainfo>
+    <metd>20220127</metd>
+    <metc>
+      <cntinfo>
+        <cntperp>
+          <cntper>Dexter H. Locke, PhD</cntper>
+          <cntorg>USDA Forest Service, Northern Research Station</cntorg>
+        </cntperp>
+        <cntaddr>
+          <addrtype>mailing and physical</addrtype>
+          <address>5523 Research Park Drive</address>
+          <city>Halethorpe</city>
+          <state>MD</state>
+          <postal>21227</postal>
+          <country>USA</country>
+        </cntaddr>
+        <cntvoice>310-463-6202</cntvoice>
+        <cntpos>Research Social Scientist</cntpos>
+        <cntemail>dexter.locke@usda.gov; dexter.locke@gmail.com</cntemail>
+      </cntinfo>
+    </metc>
+    <metstdn>FGDC Biological Data Profile of the Content Standard for Digital Geospatial Metadata</metstdn>
+    <metstdv>FGDC-STD-001.1-1999</metstdv>
+  </metainfo>
+</metadata>

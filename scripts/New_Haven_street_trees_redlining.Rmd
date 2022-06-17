@@ -1,0 +1,223 @@
+---
+title: "New_Haven_street_trees_redlining"
+author: "Dexter H. Locke, PhD"
+date: "`r format(Sys.time())`"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+TODO powerpoint slides
+  BIKE map of example track
+  estimates next to Carly's
+
+  unit of analysis matches unit of management
+  
+  add notes, next steps
+
+
+MODs
+GEOFACET (DBH not ideal)
+  species
+  species diversity
+  stems
+  stems per length
+  ... something that shows inequality. Where can problems be addressed?
+
+
+  
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# 0 load libraries and read in data----
+```{r message=FALSE}
+# Load libraries #### from Carly 
+packs <-c('tidyverse'   # cuz
+          , 'tidylog'   # prints out what was done in dplyr and tidr
+          , 'janitor'   # cleans things up, also pipe-friendly cross-tabulations
+          , 'sf'        # Simple Features, for spatial data support
+          ,'mapview'    # web maps for zooming and panning around
+          ) 
+          
+
+if (length(setdiff(packs, rownames(installed.packages()))) > 0) {
+install.packages(setdiff(packs, rownames(installed.packages())))
+}
+
+# load all packages at once.
+vapply(packs, library, character.only = TRUE, logical(1), logical.return = TRUE, quietly = TRUE)
+
+
+list.files()
+
+
+mapviewOptions(fgb = FALSE) # fixes mapview (something about new versions.. )
+
+
+# for reproducibility, we should have the same random draws. setting the seed ensures that is the case.
+set.seed(19870630)
+
+
+
+holc_pal <- c('#92BC6B' # green
+              , '#92C7C9' # blue
+              , '#E7DC6B' # yellow
+              , '#E47D67' # red
+              #, '#A9A9A9'
+              ) # dark gray)
+
+
+```
+
+
+
+
+# 1 read in data
+## A street trees (via Davey Resources Group)
+```{r}
+
+
+(trees <- st_read('input_data/1655469708431_tree_sites/tree_sites.shp', as_tibble = TRUE))
+
+trees |> 
+  sample_n(1000) |> # random sample 1000 points, larger will be slower to load.
+  mapview()
+
+
+trees |> glimpse()
+
+trees |> st_drop_geometry() |> tabyl(NBRHOOD)
+trees |> st_drop_geometry() |> tabyl(DEPARTMENT)
+trees |> st_drop_geometry() |> tabyl(GROWSPACE)
+
+(trees |> st_drop_geometry() |> # TODO filter by street trees only? 
+    # FIXME filter out to keep only parks?
+    tabyl(DEPARTMENT, GROWSPACE) |> 
+    tibble() |> 
+    pivot_longer(-DEPARTMENT) -> tree_space_dept)
+
+tree_space_dept |> 
+  ggplot(aes(value, DEPARTMENT, fill = name)) + 
+  geom_col() + 
+  theme_bw(16) + 
+  NULL
+
+mean_dbh <- trees |> 
+  st_drop_geometry() |> # drops spatial information
+  filter(DBHHEIGHT == '4.5ft') |> 
+  pull(DBH) |> 
+  mean()
+
+trees |> st_drop_geometry() |> # drops spatial information
+  filter(DBHHEIGHT == '4.5ft') |> 
+  ggplot(aes(DBH)) + 
+  geom_density() + 
+  theme_bw(16) + 
+  geom_vline(xintercept = mean_dbh, color = 'red') + 
+  facet_wrap(~NBRHOOD) +
+  NULL
+
+
+
+```
+
+
+## B street segments
+```{r}
+
+# TODO compare Bay Hanson's TreeCount to one generated with a spatial join of new Davey Resource Group trees
+(st <- st_read('input_data/URI_Roads/URI_Roads_No_Highways_Jan2022.shp', as_tibble = TRUE) %>%
+   mutate(road_segment_length_m = as.numeric(st_length(.))))
+
+st |> mapview()
+
+st |> glimpse()
+
+st |> st_drop_geometry() |> select(road_segment_length_m) |> summary() # in METERS
+
+st |> 
+  ggplot(aes(road_segment_length_m)) + 
+  # geom_density() + 
+  geom_histogram(binwidth = 10) + 
+  NULL
+
+st |> 
+  select(road_segment_length_m) |> 
+  summary()
+
+
+st |> filter(road_segment_length_m < 9) |> mapview() # TODO trim more!
+st |> filter(road_segment_length_m > 1200) |> mapview()
+
+```
+
+
+## C Neighborhoods
+```{r}
+
+(neighs <- st_read('input_data/RDS-2021-0104/Data/neighborhoods.shp', as_tibble = TRUE) |> 
+   rename(NBRHOOD = nghbr))
+
+neighs |> mapview(zcol = 'NBRHOOD')
+
+neighs |> distinct(n)
+
+neigh_labs <- neighs |> 
+  select(Neighborhood = NBRHOOD) |> 
+  st_centroid()
+
+```
+
+
+## D HOLC polygons
+```{r}
+# '../' means 'up one level'
+(holc <- st_read('../../../BaltimoreGIS/BHall/HOLC_X_Sites/HOLC_NewHaven/shp/HOLC_NewHaven.shp'))
+
+
+holc |> mapview(zcol = 'holc_grade', col.regions = holc_pal)
+
+```
+
+
+
+# 2 joins and tests
+```{r}
+
+# tabular join to see if neighborhood code in trees and neighborhood file matches
+trees |> left_join(neighs |> st_drop_geometry()) # FIXME
+trees |> anti_join(neighs |> st_drop_geometry()) |> mapview()
+
+
+# join street trees to street segments spatially
+# compare Bay's work.
+
+
+```
+
+
+## sand box
+```{r eval=FALSE, include=FALSE}
+
+```
+
+
+
+```{r, citations}
+lapply(packages, citation)
+```
+
+Last knit on `r format(Sys.time())`
+
+```{r eval=FALSE, include=FALSE}
+system.time(save.image(file = paste0('saved_sessions/New_Haven_street_trees_redlining_'
+                                     , gsub('[[:punct:]]', '-', Sys.time()), '.RData')))
+```
+
+
+# END
+

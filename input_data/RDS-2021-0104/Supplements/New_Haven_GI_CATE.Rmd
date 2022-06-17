@@ -1,0 +1,454 @@
+---
+title: 'New Haven GI CATE'
+author: 'Dexter H. Locke, PhD'
+date: '`r format(Sys.time())`'
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+
+Questions? 
+dexter.locke@gmail.com; dexter.locke@usda.gov; Twitter: @DextraordinaryH; web: http://dexterlocke.com/
+
+
+This RMarkdown is part of the larger package:
+
+Locke, D. H. (2021). Green stormwater infrastructure in New Haven, CT and 
+socioeconomic variables within neighborhoods and census block groups. Fort Collins, CO: Forest Service Research Data Archive. https://doi.org/10.2737/RDS-2021-0104
+
+which contains data and this code to replicate some of the analyses contained in 
+
+Locke, D.H., Phillips de Lucas, A.K., Murphy-Dunning, C., Henning, D., Zinn, G. 2021. Contextual Considerations of Green Infrastructure Siting. Cities And The Environment. 10.15365/cate.2021.140202 https://digitalcommons.lmu.edu/cate/vol14/iss2/2/
+
+Attribution is appreciated. 
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## 0 set up, get packages - if needed - and load them
+```{r}
+`%nin%` <- Negate(`%in%`) # custom function
+
+# where are we
+getwd()
+list.files()
+
+# load useful packages
+packs <- c('tidyverse',           # nearly a must-have
+           'tidylog',             # makes tidyverse surly (very verbose)
+           'magrittr',            # ALL of the pipes, not just %>%
+           'janitor',             # data cleaning and pipe-friendly cross tabulations
+           'santoku',             # chop! (or Kiru)
+           'Hmisc',               # for rcorr
+           'sjPlot',              # for sjt.corr
+           'sf',                  # Simple Features, modern spatial data in R
+           'spdep',               # SPatial DEPendence - a juggernaut
+           'spatialreg',          # might not use, but spatial regression, split from spdep
+           'mapview',             # quick webmaps for zooming/ panning around
+           'rgdal',
+           'gdalUtils',
+           'raster',
+           'tmap',
+           'epitools',            # contains pois.exact function for 95% CI's around standardized rates
+           'tidycensus')          # access to Census data in a tidy way
+                                  # additional information and examples
+                        # https://walkerke.github.io/tidycensus/articles/basic-usage.html#searching-for-variables
+                        # https://walkerke.github.io/tidycensus/articles/spatial-data.html)            # 
+
+# check for all of the libraries
+if(length(setdiff(packs, rownames(installed.packages()))) > 0) {
+  install.packages(setdiff(packs, rownames(installed.packages())))
+}
+
+# load them all at once
+vapply(packs, library, character.only = TRUE, logical(1), logical.return = TRUE, quietly = TRUE)
+
+
+```
+
+
+## 1 read in the data
+### A neighborhoods
+```{r}
+# ESRI likes to rename columns, these are the column names that are more manageable and readable
+neigh_shp_names <- c(
+    'rowname.x'
+  , 'id'
+  , 'STATE'
+  , 'COUNTY'
+  , 'CITY'                               
+  , 'Neighborhood'                       
+  , 'REGIONID.x'                         
+  , 'Total population_2017'              
+  , 'Population under age 18_2017'       
+  , 'Percent under age 18_2017'          
+  , 'Population ages 65+_2017'           
+  , 'Percent ages 65+_2017'              
+  , 'Latino population_2017'             
+  , 'Percent Latino_2017'                
+  , 'White population_2017'              
+  , 'Percent white_2017'                 
+  , 'Black population_2017'              
+  , 'Percent black_2017'                 
+  , 'Other race population_2017'         
+  , 'Percent other race_2017'            
+  , 'Foreign-born population_2017'       
+  , 'Percent foreign-born_2017'          
+  , 'Total households_2017'              
+  , 'Owner-occupied households_2017'     
+  , 'Homeownership rate_2017'            
+  , 'Cost-burdened households_2017'      
+  , 'Cost-burden rate_2017'              
+  , 'Poverty status known_2017'          
+  , 'Population in poverty_2017'         
+  , 'Poverty rate_2017'                  
+  , 'Low-income population_2017'         
+  , 'Low-income rate_2017'               
+  , 'Under 18, poverty status known_2017'
+  , 'Children in poverty_2017'           
+  , 'Child poverty rate_2017'            
+  , 'Low-income children_2017'           
+  , 'Child low-income rate_2017'         
+  , 'Ages 65+, poverty status known_2017'
+  , 'Seniors in poverty_2017'            
+  , 'Senior poverty rate_2017'           
+  , 'Low-income seniors_2017'            
+  , 'Senior low-income rate_2017'        
+  , 'Life expectancy_2010-2015'          
+  , 'High blood pressure_2015'           
+  , 'Coronary heart disease_2016'        
+  , 'Current asthma_2016'                
+  , 'Diabetes_2016'                      
+  , 'Annual checkup_2016'                
+  , 'Dental visit_2016'                  
+  , 'Health insurance_2016'              
+  , 'Current smoking_2016'               
+  , 'Sleep <7 hours_2016'                
+  , 'gi_counts'                          
+  , 'a_tree'                             
+  , 'a_grass'                            
+  , 'a_soil'                             
+  , 'a_water'                            
+  , 'a_building'                         
+  , 'a_road'                             
+  , 'a_other_paved'                      
+  , 'a_total'                            
+  , 'p_tree'                             
+  , 'p_grass'                            
+  , 'p_soil'                             
+  , 'p_water'                            
+  , 'p_building'                         
+  , 'p_road'                             
+  , 'p_other_paved'                      
+  , 'Impervious Surface (%)'             
+  , 'REGIONID.y'                         
+  , 'gi_per_cap'                         
+  , 'gi_per_1000'                        
+  , 'expected'                           
+  , 'std_rate'                           
+  , 'rowname.y'                          
+  , 'x'                                  
+  , 'pt'                                 
+  , 'rate'                               
+  , 'lower'                              
+  , 'upper'                              
+  , 'conf.level'
+  , 'geometry'                           
+  )
+
+# read in the data
+neigh_sf <- st_read(paste0(getwd(), '/input_data/neighborhoods.shp')) %>% 
+  rename_at(vars(everything()), ~neigh_shp_names)
+
+```
+
+### B GSI and watersheds
+```{r}
+
+gi <- st_read(paste0(getwd(), '/input_data/gi_cartographic.shp')) %>% 
+  mutate(label = 'Green Stormwater Infrastructure (GSI)')
+
+shed_outlines <- st_read(paste0(getwd(), '/input_data/shed_outlines.shp')) %>% 
+  mutate(label = 'Combined Sewer Areas')
+
+dt_shed <- st_read(paste0(getwd(), '/input_data/dt_shed.shp')) %>% 
+  mutate(label = 'Downtown Watershed')
+
+```
+
+### C Census block groups
+```{r}
+# ESRI likes to rename columns, these are the column names that are more manageable and readable
+cbg_shape_names <- c(
+    'rowname'
+  , 'GEOID'
+  , 'tot_pop'
+  , 'medincomeE'
+  , 'pct_white'
+  , 'pct_black'             
+  , 'pct_am_ind'             
+  , 'pct_asian'              
+  , 'pct_pac_is'            
+  , 'pct_other_r'
+  , 'pct_own_occ'
+  , 'pct_vac'
+  , 'pct_edu'
+  , 'gi_counts'
+  , 'id'
+  , 'a_tree'
+  , 'a_grass'
+  , 'a_soil'
+  , 'a_water'
+  , 'a_building'
+  , 'a_road'
+  , 'a_other_paved'
+  , 'a_total'
+  , 'p_tree'
+  , 'p_grass'
+  , 'p_soil'
+  , 'p_water'
+  , 'p_building'
+  , 'p_road'
+  , 'p_other_paved'
+  , 'Impervious Surface (%)'
+  , 'gi_per_cap'
+  , 'gi_per_1000'
+  , 'expected'
+  , 'std_rate'  
+  , 'geometry'
+  )
+
+
+nh_cbg_sf <- st_read(paste0(getwd(), '/input_data/census_block_groups.shp')) %>% 
+  rename_at(vars(everything()), ~cbg_shape_names)
+
+```
+
+### D CSOs
+```{r}
+
+cso <- st_read(paste0(getwd(), '/input_data/CSOs.shp')) %>% 
+  mutate(label = 'Combined Sewer\nOverflows (CSOs)')
+
+```
+
+
+## 2 Data outputs
+### A Figure 1: study area - poverty, CSOs, downtown watershed
+```{r}
+
+# prep
+nh_cbg_sf %>% group_by() %>% summarise() -> outline # city outline, for cartography (not used)
+
+neigh_sf %<>% # make nicer labels for the map
+  mutate(labs = as.factor(Neighborhood),
+         labs = recode(labs, 
+                       'West Rock' = 'West\nRock',
+                       'West River' = 'West\nRiver',
+                       'Fair Haven Heights' = 'Fair Haven\nHeights',
+                       'East Shore' = 'East\nShore',
+                       'Long Wharf' = 'Long\nWharf',
+                       'Wooster Square' = 'Wooster\nSquare',
+                       'Beaver Hills' = 'Beaver\nHills',
+                       'Prospect Hill' = 'Prospect\nHill'))
+
+
+neigh_text_diff <- c('Dwight', 'West River', 'Hill', 'Long Wharf', 'West Rock')
+
+neigh_sf %>% filter(Neighborhood %in% neigh_text_diff) -> black_label_neighs
+
+neigh_sf %>% filter(Neighborhood %nin% neigh_text_diff) -> white_label_neighs
+
+
+# Revised Figure 1
+# neighborhoods by poverty and with CSOs
+# begin map
+tm_shape(neigh_sf) +
+  tm_polygons('Poverty rate_2017', title = 'Poverty Rate, Year 2017', legend.reverse = TRUE,
+              palette = 'viridis') + # palette takes the RColorBrewer values                                                               # RColorBrewer::display.brewer.all()
+tm_shape(neigh_sf) +
+  tm_borders('white') +
+tm_shape(dt_shed) +
+  tm_polygons('label', title = '', alpha = 0, lwd = 3) +
+tm_shape(white_label_neighs) +
+  tm_text('labs', size = .6, col = 'white', shadow = TRUE) +
+tm_shape(black_label_neighs) +
+  tm_text('labs', size = .6, col = 'black', shadow = TRUE) +
+tm_shape(cso) +
+  tm_dots('label', title = '', size = .2, col = 'black', shape = 21) +
+tm_add_legend(type = 'symbol', labels = 'Combined Sewer Overflows (CSOs)',
+              col = 'black', shape = 21, size = 1.1) +
+  tm_layout(  legend.text.size = 1.1
+            , legend.title.size = 1.5
+            , legend.width = 1.5
+            )
+  # tm_credits(text = paste0('created on ', gsub('[[:punct:]]', '_', Sys.time()), ' by DHL'),
+  #            position = c('left', 'bottom')) + 
+  # tm_credits(text = 'A', size = 1.75,
+  #            position = c('right', 'top'))
+
+tmap_save(filename = paste0('output_data/graphics/Fig_1_poverty_CSO_',
+                            gsub('[[:punct:]]', '_', Sys.time()), '.png'),
+          width = 3.25*2,
+          height =3.25*2,
+          units = 'in')
+```
+
+### B Figure 2: CSO areas, GSI locations and the downtown watershed
+```{r}
+
+# Revised Figure 2
+tm_shape(shed_outlines) + 
+  tm_polygons() + 
+tm_shape(neigh_sf) + 
+  tm_polygons('Poverty rate_2017', title = 'Poverty Rate,\nYear 2017', legend.reverse = TRUE,  
+              palette = 'viridis') + 
+tm_shape(shed_outlines) +
+  tm_polygons('label', alpha = .3, title = '', lwd = 2, border.col = 'black') +
+tm_shape(dt_shed) +
+  tm_polygons('label', title = '', alpha = 0, lwd = 3, border.col = 'red') +
+# tm_shape(dt_shed) + 
+#   tm_borders('red', lwd = 2) +
+tm_shape(gi) +
+  tm_dots('label', size = .05, col = 'black', shape = 3) +
+  tm_add_legend(type = 'symbol', labels = 'Green Stormwater Infrastructure (GSI)',
+              border.col = 'black', col = 'black', shape = 3, size = .75)
+
+tmap_save(filename = paste0('output_data/graphics/Fig_2_CSO_GSI_',
+                            gsub('[[:punct:]]', '_', Sys.time()), '.png'),
+          width = 3.25*2,
+          height =3.25*2,
+          units = 'in')
+
+
+```
+
+### C Figure 3: Neighborhood-level Odds Ratios
+```{r}
+
+# neighborhood odds ratios
+neigh_sf %>%
+  mutate(Neighborhood = ifelse(Neighborhood == 'Hill', 'the Hill', Neighborhood)) %>% 
+  dplyr::filter(Neighborhood != 'Long Wharf') %>% 
+  ggplot(aes(x = rate, y = reorder(Neighborhood, `Poverty rate_2017`), col = `Impervious Surface (%)`)) + 
+  scale_x_continuous(name = 'Odds Ratio', breaks = seq(0, 9)) + 
+  geom_vline(xintercept = 0) + 
+  geom_vline(xintercept = 1, col = 'gray', size = 2) + 
+  # geom_vline(xintercept = 2, lty = 2) + # to denote really extreme values
+  geom_errorbarh(aes(xmin = lower, xmax = upper), col = 'gray') + 
+  geom_point(size = 3) + 
+  geom_point(size = 3, shape = 21, color = 'black') + 
+  viridis::scale_color_viridis(option = 'inferno', direction = -1) + 
+  labs(title = 'Green Stormwater Infrastructure by Neighborhood',
+       subtitle = 'New Haven, CT',
+       y = 'Neighborhood') + 
+  geom_segment(x = 5.5,
+               y = 15,
+               color = 'black',
+               xend = 5.5,
+               yend = 5,
+               arrow = arrow(length = unit(0.03, "npc"), ends = 'both')) +
+  annotate('text',
+           x = 6,
+           y = 14,
+           size = 4,
+           hjust = 0,
+           label = 'Higher Poverty Rate') +
+  annotate('text',
+           x = 6,
+           y = 7,
+           size = 4,
+           hjust = 0,
+           label = 'Lower Poverty Rate,\nYear 2017') +
+  theme_classic(12) + 
+  theme(legend.position = 'bottom', plot.title = element_text(hjust = 0))
+
+# save out
+ggsave(filename = paste0('output_data/graphics/Fig_3_odds_ratio_',
+                            gsub('[[:punct:]]', '_', Sys.time()), '.png'),
+          width = 7,
+          height =6,
+          units = 'in')
+
+```
+
+### D Table 1: Neighborhood Descriptive Statistics
+```{r}
+
+
+neigh_sf %>% 
+  st_drop_geometry() %>% 
+  mutate('Latino Population (%)' = `Percent Latino_2017`*100,
+         'White Population (%)' = `Percent white_2017`*100,
+         'African American (%)' = `Percent black_2017`*100,
+         'Foreign Born (%)' = `Percent foreign-born_2017`*100,
+         'Poverty Rate' = round(`Poverty rate_2017`, 2),
+         'Poverty Rate' = round(`Poverty rate_2017`, 6),
+         'GSI* Odds Ratio' = round(rate, 2),
+         'lower 95% CI' = round(lower, 2),
+         'upper 95% CI' = round(upper, 2),
+         'GSI* per 1,000 residents' = round(gi_per_1000, 3),
+         Neighborhood = ifelse(Neighborhood == 'Hill', 'the Hill', Neighborhood),
+         `Impervious Surface (%)` =  round(`Impervious Surface (%)`)) %>% 
+  tidylog::select(Neighborhood,
+                  `Impervious Surface (%)`,
+         'Total Population (2017)' = `Total population_2017`,
+         'Latino Population (%)',
+         'White Population (%)',
+         'African American (%)',
+         'Foreign Born (%)',
+         'Poverty Rate',
+         'GSI* (n)' = gi_counts,
+         #'GSI* per capita' = gi_per_cap,
+         'GSI* per 1,000 residents',
+         'GSI* Odds Ratio',
+         'lower 95% CI',
+         'upper 95% CI') %>% 
+  write.csv(., file = paste0(getwd(), '/output_data/tables/Table_1_neigh_summ_stats_slim_', Sys.Date(), '.csv'),
+            row.names = F)
+
+```
+
+
+### E Table 2: Census Block Group Correlations
+```{r}
+
+# pretty up names in the selection for the correlation matrix
+nh_cbg_sf %>% 
+  st_drop_geometry() %>% 
+  tidylog::select(#GEOID,
+          'GSI* (n)' = gi_counts
+         , 'GSI* per capita' = gi_per_cap
+         , 'GSI* Odds Ratio' = std_rate
+         
+         , 'Median Household Income ($)' = medincomeE
+         , 'White Population (%)' = pct_white
+         , 'African American (%)' = pct_black
+         , 'Owner Occupied (%)' = pct_own_occ
+         , 'Vacant Housing (%)' = pct_vac
+         , 'Educational Attainment**' = pct_edu) %>% 
+  tab_corr(.
+           ,
+           corr.method = 'spearman',
+         triangle = 'lower',
+         p.numeric = TRUE, # remove the "#" below to save the file
+         file = paste0(getwd(), '/output_data/tables/Table_2_cbg_demo_corrs_', Sys.Date(), '.html')
+         )
+
+
+```
+
+
+
+## CITE your sources!!!
+```{r}
+lapply(packs, citation); rm(packs)
+sessionInfo()
+```
+
+Last Knit on `r format(Sys.time())`
+
+# end

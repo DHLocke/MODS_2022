@@ -1,0 +1,83 @@
+column number,name,alias,definition,source
+1,rwnm_x,rowname.x,rowname,internal
+2,id,id,id,internal
+3,STATE,STATE,CT (Connecticut),Census
+4,COUNT,COUNTY,County,Census
+5,CITY,CITY,New Haven,Census
+6,Nghbr,Neighborhood,Neighborhood,DataHaven
+7,REGIONID_x,REGIONID.x,"ID provided by DataHaven, likely based on Census FIPS codes (but not really not sure)",Census
+8,Tp_2017,Total population_2017,Total population in 2017,DataHaven
+9,Pp18_2017,Population under age 18_2017,Population under age 18 in 2017,DataHaven
+10,Pr18_2017,Percent under age 18_2017,Percent under age 18 in 2017,DataHaven
+11,Pp65_2017,Population ages 65+_2017,Population ages 65+ in 2017,DataHaven
+12,Pr65_2017,Percent ages 65+_2017,Percent ages 65+ in 2017,DataHaven
+13,L_2017,Latino population_2017,Latino population in 2017,DataHaven
+14,PL_20,Percent Latino_2017,Percent Latino in 2017,DataHaven
+15,W_201,White population_2017,White population in 2017,DataHaven
+16,Pw_2017,Percent white_2017,Percent white in 2017,DataHaven
+17,B_201,Black population_2017,Black population in 2017,DataHaven
+18,Pb_2017,Percent black_2017,Percent black in 2017,DataHaven
+19,O_201,Other race population_2017,Other race population in 2017,DataHaven
+20,Pr_201,Percent other race_2017,Percent other race in 2017,DataHaven
+21,F_20,Foreign-born population_2017,Foreign-born population in 2017,DataHaven
+22,P_20,Percent foreign-born_2017,Percent foreign-born in 2017,DataHaven
+23,Th_2017,Total households_2017,Total households in 2017,DataHaven
+24,O_20,Owner-occupied households_2017,Owner-occupied households in 2017,DataHaven
+25,H_2017,Homeownership rate_2017,Homeownership rate in 2017,DataHaven
+26,C_h_201,Cost-burdened households_2017,Cost-burdened households in 2017,DataHaven
+27,C_r_201,Cost-burden rate_2017,Cost-burden rate in 2017,DataHaven
+28,Ps_201,Poverty status known_2017,Poverty status known in 2017,DataHaven
+29,Pp_201,Population in poverty_2017,Population in poverty in 2017,DataHaven
+30,Pr_2017,Poverty rate_2017,Poverty rate in 2017,DataHaven
+31,L_p_201,Low-income population_2017,Low-income population in 2017,DataHaven
+32,L_r_201,Low-income rate_2017,Low-income rate in 2017,DataHaven
+33,U18_p,"Under 18, poverty status known_2017","Under 18, poverty status known in 2017",DataHaven
+34,Cip_201,Children in poverty_2017,Children in poverty in 2017,DataHaven
+35,Cpr_201,Child poverty rate_2017,Child poverty rate in 2017,DataHaven
+36,L_c_201,Low-income children_2017,Low-income children in 2017,DataHaven
+37,Cl_20,Child low-income rate_2017,Child low-income rate in 2017,DataHaven
+38,A65_p,"Ages 65+, poverty status known_2017","Ages 65+, poverty status known in 2017",DataHaven
+39,Sip_201,Seniors in poverty_2017,Seniors in poverty in 2017,DataHaven
+40,Spr_201,Senior poverty rate_2017,Senior poverty rate in 2017,DataHaven
+41,L_s_201,Low-income seniors_2017,Low-income seniors in 2017,DataHaven
+42,S_20,Senior low-income rate_2017,Senior low-income rate in 2017,DataHaven
+43,L_2010,Life expectancy_2010-2015,Life expectancy in 2010-2015,DataHaven
+44,Hb_201,High blood pressure_2015,High blood pressure in 2015 - (data came from DataHaven and just kept these columns in the table https://www.ctdatahaven.org/data-resources/connecticut-city-neighborhood-profiles),DataHaven
+45,Ch_201,Coronary heart disease_2016,Coronary heart disease in 2016,DataHaven
+46,Ca_2016,Current asthma_2016,Current asthma in 2016,DataHaven
+47,Db_2016,Diabetes_2016,Diabetes in 2016,DataHaven
+48,A_201,Annual checkup_2016,Annual checkup in 2016,DataHaven
+49,Dv_2016,Dental visit_2016,Dental visit in 2016,DataHaven
+50,H_2016,Health insurance_2016,Health insurance in 2016,DataHaven
+51,Cs_2016,Current smoking_2016,Current smoking in 2016,DataHaven
+52,S_7_2,Sleep <7 hours_2016,Sleep <7 hours in 2016,DataHaven
+53,g_cnt,gi_counts,Green Infrastructure Counts,Original
+54,a_tre,a_tree,area of tree (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+55,a_grs,a_grass,area of grass/shrub (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+56,a_sol,a_soil,area of soil (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+57,a_wtr,a_water,area of water (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+58,a_bld,a_building,area of building (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+59,a_rod,a_road,area of road (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+60,a_th_,a_other_paved,area of other paved (area came from pixels in square feet),Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+61,a_ttl,a_total,total area,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+62,p_tre,p_tree,percent tree canopy cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+63,p_grs,p_grass,percent grass/shrub cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+64,p_sol,p_soil,percent soil cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+65,p_wtr,p_water,percent water cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+66,p_bld,p_building,percent building cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+67,p_rod,p_road,percent road cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+68,p_th,p_other_paved,percent other paved cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+69,is,Impervious Surface (%),percent impervious surface cover,Derived from high-resolution land cover from South Central Regional Council of Governments (SCRCOG) and the University of Vermont (UVM) the Spatial Analysis Lab (The SAL)
+70,regionid_y,REGIONID.y,same as REGIONID.x,
+71,g_pr,gi_per_cap,Green Infrastructure Per Capita,Original / Derived
+72,g_10,gi_per_1000,Green Infrastructure Per 1000 persons,Original / Derived
+73,expct,expected,expected GI counts under the scenario that installations are proportional to population (eg Odds Ratio = 1),Original / Derived
+74,std_r,std_rate,"standardized rate - overall GSI uptake rate (so GSI divided by population = r), then the standardized rate is population of each polygon (block group or neighborhood) times r. Population * r = standardized rate",Original / Derived
+75,rwnm_y,rowname.y,same as rowname.x,
+76,x,x,counts of GI,
+77,pt,pt,point estimate,
+78,rate,rate,rate,
+79,lower,lower,confidence interval lower limit,
+80,upper,upper,confidence interval upper limit,
+81,cnf_l,conf.level,the confidence interval level,
+82,geometry,geometry,spatial data,
