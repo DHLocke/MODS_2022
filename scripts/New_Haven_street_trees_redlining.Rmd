@@ -7,13 +7,30 @@ editor_options:
   chunk_output_type: console
 ---
 
-TODO powerpoint slides
-  BIKE map of example track
-  estimates next to Carly's
+Add in Park Score
 
-  unit of analysis matches unit of management
+Focus on: Wooster square, Beaverponds, Kimberly Field
+  and their neighborhoods
+    what are their HOLC grades?
+    current Census data
+
+
+Ash Map 3% ash city wide.. but totally clustered.
+  Map of single species?
+  Alpha vs Beta diversity?
   
-  add notes, next steps
+
+TODO
+  graphs to make
+      Three inventoried parks relative to all street trees previously in the inventory (exclude data previously collected)
+  When trees were planted? (inv_date, plntdate)
+  bin inspect_dt (data)
+  street trees per length
+  group dbh into classes
+
+species accumulation curves
+
+
 
 
 MODs
@@ -24,6 +41,16 @@ GEOFACET (DBH not ideal)
   stems per length
   ... something that shows inequality. Where can problems be addressed?
 
+
+
+
+DONE powerpoint slides
+  BIKE map of example track
+  estimates next to Carly's
+
+  unit of analysis matches unit of management
+  
+  add notes, next steps
 
   
 
@@ -40,7 +67,11 @@ packs <-c('tidyverse'   # cuz
           , 'tidylog'   # prints out what was done in dplyr and tidr
           , 'janitor'   # cleans things up, also pipe-friendly cross-tabulations
           , 'sf'        # Simple Features, for spatial data support
-          ,'mapview'    # web maps for zooming and panning around
+          , 'mapview'   # web maps for zooming and panning around
+          , 'nngeo'     # st_nn is faster and more straight forward than st_* alternatives
+          , 'parallel'  # parallel processing, vroom, vroom
+          , 'ggrepel'   # to move text labels on graphs
+          , 'vegan'     # vegetation analyses
           ) 
           
 
@@ -74,51 +105,231 @@ holc_pal <- c('#92BC6B' # green
 ```
 
 
+## i neigh geofacet
+```{r}
+
+library(geofacet)
+us_state_grid1 # sample, it goes: row, col, code, name
+
+
+(
+  nh_neighs_geofacet <- tribble(
+    ~row, ~col, ~code,                     ~name,        
+    1,    1,    'Amity',                   'Amity',        
+    1,    2,    'West Rock',               'West Rock',      
+    1,    3,    'Beaver Hills',            'Beaver Hills',       
+    1,    4,    'Newhallville',            'Newhallville',      
+    2,    5,    'Prospect Hill',           'Prospect Hill',      
+    2,    6,    'East Rock',               'East Rock',
+    3,    7,    'Fair Haven',              'Fair Haven',
+    2,    7,    'Quinnipiac Meadows',     'Quinnipiac\nMeadows',
+    2,    2,    'Westville',               'Westville',
+    2,    3,    'Edgewood',                'Edgewood',
+    2,    4,    'Dixwell',                 'Dixwell',
+    3,    5,    'Downtown',                'Downtown',
+    # 3,    6,    'Wooster Square / Mill River',          'Wooster Square / Mill River',
+    3,    6,    'Wooster Square',          'Wooster Square\n/ Mill River',
+    3,    4,    'Dwight',                  'Dwight',
+    3,    3,    'West River',              'West River',
+    4,    4,    'Hill',                    'Hill',
+    4,    5,    'Long Wharf',              'Long Wharf',
+    4,    7,    'Fair Haven Heights',      'Fair Haven\nHeights',
+    5,    7,    'Annex',                   'Annex',
+    6,    7,    'East Shore',              'East Shore'
+    )
+  )
+
+grid_preview(nh_neighs_geofacet)
+
+
+```
+
+
 
 
 # 1 read in data
-## A street trees (via Davey Resources Group)
+## A Neighborhoods
 ```{r}
 
+(neighs <- st_read('input_data/RDS-2021-0104/Data/neighborhoods.shp', as_tibble = TRUE) |> 
+   rename(neighborhood = nghbr))
 
-(trees <- st_read('input_data/1655469708431_tree_sites/tree_sites.shp', as_tibble = TRUE))
+neighs |> mapview(zcol = 'neighborhood')
 
+neighs |> distinct(neighborhood)
+
+neigh_labs <- neighs |> 
+  select(neighborhood) |> 
+  st_centroid()
+
+# neigh_labs |> mapview()
+
+```
+
+
+## B HOLC polygons
+```{r}
+# '../' means 'up one level'
+(holc <- st_read('../../../BaltimoreGIS/BHall/HOLC_X_Sites/HOLC_NewHaven/shp/HOLC_NewHaven.shp') |> 
+   st_transform(crs = st_crs(neighs)))
+
+
+holc |> mapview(zcol = 'holc_grade', col.regions = holc_pal) +
+  mapview(neighs |> summarise() |> nngeo::st_remove_holes(), alpha.regions = 0, lwd = 2) 
+
+```
+
+
+
+## C parks
+```{r}
+
+parks <- st_read('input_data/new haven parks/Parks.shp', as_tibble = TRUE) |> 
+  rowid_to_column() |> 
+  filter(Category == 'Park') |> # drop golf courses and triangles?
+  mutate(parks_to_keep = 
+           case_when(
+             rowid == '115' ~ 1
+             , rowid == '125' ~ 1
+             , rowid == '69'  ~ 1
+             , rowid == '107' ~ 1
+             , TRUE ~ 0 
+            )
+         , ParkName = 
+           case_when(
+               ParkName == 'Beaver Pond Park (Blackmon)' ~ 'Beaver Pond Park'
+             , ParkName == 'Jackie Robinson School Park' ~ 'Beaver Pond Park'
+             , ParkName == 'Vietch Field'                ~ 'Beaver Pond Park'
+             , ParkName == 'Bowen Field'                 ~ 'Beaver Pond Park'
+             , TRUE ~ ParkName
+           )
+           ) |> 
+  st_transform(crs = st_crs(neighs))
+
+
+parks |> mapview(col.regions = 'light green')
+
+parks |> st_drop_geometry() |> tabyl(Category)
+
+# parks_to_keep <- c('Kimberly Field'
+#                    # , 'Beaver Pond Park (Blackmon)'
+#                    # , 'Jackie Robinson School Park'
+#                    # , 'Vietch Field'
+#                    # , 'Bowen Field'
+#                    , 'Wooster Square'
+#                    )
+
+parks |> 
+  # filter(parks_to_keep == 1) |> 
+  group_by(ParkName) |> 
+  summarise() |> 
+  mapview(
+    # col.regions = 'light green'
+    )
+
+
+# park_trees <- trees |> #st_drop_geometry() |> # drops spatial information
+#     filter(dbhheight == '4.5ft') |>
+#     filter(department == 'Parks' & growspace == 'Yard/Park/Open space') 
+# 
+# # 2x check
+# park_trees |> st_drop_geometry() |> tabyl(growspace)
+# 
+# park_trees |> mapview()
+# 
+# 
+# park_trees |> 
+#   
+#   mapview() + 
+#   mapview(holc, zcol = 'holc_grade', col.regions = holc_pal) + 
+#   mapview(parks |> filter(ParkName %in% parks_to_keep), col.regions = 'dark green', lwd = 2)
+
+```
+
+
+
+## D trees (via Davey Resources Group)
+```{r}
+
+(
+  trees <- st_read('input_data/1655469708431_tree_sites/tree_sites.shp', as_tibble = TRUE) |> 
+    clean_names() |> 
+    filter(!is.na(nbrhood)) |> 
+    st_transform(crs = st_crs(neighs)) |> 
+    st_join(holc |> select(holc_grade), join = st_intersects) |> # add holc grade
+    st_join(parks |> select(`Park Name` = ParkName, parks_to_keep)
+            , join = st_intersects) |> # add holc grade
+    mutate(neighborhood = ifelse(nbrhood == 'Wooster Square / Mill River'
+                                 , 'Wooster Square', nbrhood)
+           , dbh_class = cut(dbh, breaks = seq(0, 100, 5))
+           # , dbh_class = fct_lump_n(dbh_class, 9, other_level = '> 45 in')
+           , dbh_class = fct_lump_n(dbh_class, 7, other_level = '> 35 in')
+           )
+    )
+
+
+# 2x check
 trees |> 
   sample_n(1000) |> # random sample 1000 points, larger will be slower to load.
-  mapview()
+  mapview() + 
+  mapview(neighs |> summarise() |> nngeo::st_remove_holes(), alpha.regions = 0, lwd = 2) +
+  mapview(neighs, alpha.regions = 0)
 
 
+# test query 
+trees |> 
+  st_drop_geometry() |> 
+  tabyl(inv_date) |> 
+  tibble() |> 
+  tail()
+
+trees |> 
+  filter(inv_date < '2022-06-15')
+  # filter(inv_date > '2022-06-15')
+  # filter(inv_date == inspect_dt)
+
+
+```
+
+
+# 2 EDA
+```{r eval=FALSE, include=FALSE}
 trees |> glimpse()
 
-trees |> st_drop_geometry() |> tabyl(NBRHOOD)
-trees |> st_drop_geometry() |> tabyl(DEPARTMENT)
-trees |> st_drop_geometry() |> tabyl(GROWSPACE)
+trees |> st_drop_geometry() |> tabyl(neighborhood)
+trees |> st_drop_geometry() |> tabyl(department)
+trees |> st_drop_geometry() |> tabyl(growspace)
+trees |> st_drop_geometry() |> tabyl(dbh_class)
+# trees |> st_drop_geometry() |> mutate(dbh_test = fct_lump_n(dbh_class, 7)) |> tabyl(dbh_test)
 
 (trees |> st_drop_geometry() |> # TODO filter by street trees only? 
     # FIXME filter out to keep only parks?
-    tabyl(DEPARTMENT, GROWSPACE) |> 
+    tabyl(department, growspace) |> 
     tibble() |> 
-    pivot_longer(-DEPARTMENT) -> tree_space_dept)
+    pivot_longer(-department) -> tree_space_dept)
 
 tree_space_dept |> 
-  ggplot(aes(value, DEPARTMENT, fill = name)) + 
+  ggplot(aes(value, department, fill = name)) + 
   geom_col() + 
   theme_bw(16) + 
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 27500)) +
   NULL
 
-mean_dbh <- trees |> 
+(mean_dbh <- trees |> 
   st_drop_geometry() |> # drops spatial information
-  filter(DBHHEIGHT == '4.5ft') |> 
-  pull(DBH) |> 
-  mean()
+  filter(dbhheight == '4.5ft') |> 
+  pull(dbh) |> 
+  mean())
 
 trees |> st_drop_geometry() |> # drops spatial information
-  filter(DBHHEIGHT == '4.5ft') |> 
-  ggplot(aes(DBH)) + 
+  filter(dbhheight == '4.5ft') |> 
+  ggplot(aes(dbh)) + 
   geom_density() + 
   theme_bw(16) + 
   geom_vline(xintercept = mean_dbh, color = 'red') + 
-  facet_wrap(~NBRHOOD) +
+  # facet_wrap(~neighborhood) +
+  geofacet::facet_geo(~neighborhood, grid = nh_neighs_geofacet, label = 'name') + 
+  theme(strip.text.x = element_text(size = 10)) +
   NULL
 
 
@@ -126,12 +337,314 @@ trees |> st_drop_geometry() |> # drops spatial information
 ```
 
 
-## B street segments
+## A DBH: street trees
+```{r}
+
+# DBH bins
+trees |> st_drop_geometry() |> # drops spatial information
+  filter(dbhheight == '4.5ft') |> 
+  filter(department == 'Street Tree') |> 
+  tabyl(dbh_class) |> 
+  tibble() |> 
+  drop_na() |> 
+  ggplot(aes(dbh_class, n)) + 
+  geom_col() + 
+  theme_bw(16) + 
+  labs(
+    title = 'New Haven Street Trees by Size'
+    , x = 'Diameter at Breast Height (DBH) class'
+    , y = 'Count'
+  ) +
+  NULL
+
+```
+
+
+## B DBH by neighborhood: street trees
+```{r}
+
+# DBH bins
+trees |> st_drop_geometry() |> # drops spatial information
+  filter(dbhheight == '4.5ft') |> 
+  filter(department == 'Street Tree') |> 
+  group_by(neighborhood, dbh_class) |> 
+  count() |> 
+  drop_na(dbh_class) |> 
+  ggplot(aes(dbh_class, n)) + 
+  geom_col() + 
+  theme_bw() + 
+  # facet_wrap(~neighborhood) +
+  geofacet::facet_geo(~neighborhood, grid = nh_neighs_geofacet, label = 'name') + 
+  theme(strip.text.x = element_text(size = 10)
+        , axis.text.x = element_text(angle = 90)
+        ) +
+  labs(
+    title = 'New Haven Street Trees by Size and Neighborhood'
+    , x = 'Diameter at Breast Height (DBH) class'
+    , y = 'Count'
+  ) +
+  NULL
+
+
+```
+
+
+## C street tree species 
+```{r}
+# find most common species in each neighborhood
+(
+  trees |> st_drop_geometry() |> # drops spatial information
+    filter(dbhheight == '4.5ft') |>
+    filter(department == 'Street Tree') |> 
+    group_by(neighborhood, species_co) |> # count species per neighborhood
+    count() |>
+    arrange(neighborhood, desc(n)) |>
+    group_by(neighborhood) |>
+    slice(1:5) |>
+    ungroup() |>
+    rename(Species = species_co) -> top_5_species_neighborhood
+  )
+
+
+top_5_species_neighborhood |>
+  # ggplot(aes(n, reorder(Species, n))) +
+  ggplot(aes(n, Species)) +
+  geom_col() + 
+  theme_bw() +
+  labs(title = 'Top 5 most common street tree species in New Haven, CT per neighborhood'
+       # , subtitle = 'by neighbothood'
+       ) + 
+  # facet_wrap(~neighborhood) +
+  geofacet::facet_geo(~neighborhood, grid = nh_neighs_geofacet, label = 'name', scales = 'free_y') +
+  theme(strip.text.x = element_text(size = 10)
+        , axis.text.x = element_text(angle = 90)
+        ) +
+  # coord_flip() +
+  NULL
+
+
+# # https://stackoverflow.com/questions/51710863/how-to-order-bars-within-all-facets
+# scale_y_reordered <- function(..., sep = "___") {
+#   reg <- paste0(sep, ".+$")
+#   ggplot2::scale_y_discrete(labels = function(y) gsub(reg, "", y), ...)
+# }
+# 
+# reorder_within <- function(y, by, within, fun = mean, sep = "___", ...) {
+#   new_y <- paste(y, within, sep = sep)
+#   stats::reorder(new_y, by, FUN = fun)
+# }
+# 
+# 
+# # ggplot(ii, aes(reorder_within(sn, nbr, s), nbr)) +
+# #      geom_bar(stat = 'identity') +
+# #      scale_x_reordered() +
+# #      facet_wrap(.~ s, ncol=2,scales = "free_x") + 
+# #     theme(axis.text.x=element_text(angle=90,hjust=1,vjust=.5,colour='gray50'))
+# 
+# 
+# 
+# scale_x_reordered <- function(..., sep = "___") {
+#   reg <- paste0(sep, ".+$")
+#   ggplot2::scale_x_discrete(labels = function(x) gsub(reg, "", x), ...)
+# }
+# 
+# reorder_within <- function(x, by, within, fun = mean, sep = "___", ...) {
+#   new_x <- paste(x, within, sep = sep)
+#   stats::reorder(new_x, by, FUN = fun)
+# }
+# 
+# 
+# 
+# # find most common species in each neighborhood
+# (trees |> st_drop_geometry() |> # drops spatial information
+#   filter(dbhheight == '4.5ft') |> 
+#   group_by(neighborhood, species_co) |> # count species per neighborhood
+#   count() |> 
+#   arrange(neighborhood, desc(n)) |> 
+#   group_by(neighborhood) |> 
+#   slice(1:5) |> 
+#   ungroup() |>
+#   rename(Species = species_co) -> top_5_species_neighborhood)
+# 
+# 
+# top_5_species_neighborhood |> 
+#   ggplot(aes(Species, reorder_within(n, Species, neighborhood))) + 
+#   geom_bar(stat = 'identity') + 
+#   scale_y_reordered() +
+#   # scale_x_reordered() +
+#   # theme_bw(16) + 
+#   # facet_wrap(~neighborhood) +
+#   geofacet::facet_geo(~neighborhood, grid = nh_neighs_geofacet, label = 'name', scales = 'free_y') +
+#   theme(strip.text.x = element_text(size = 10)) +
+#   coord_flip() + 
+#   NULL
+# 
+#   
+# trees |> st_drop_geometry() |> # drops spatial information
+#   filter(DBHHEIGHT == '4.5ft') |> 
+#   group_by(NBRHOOD) |> 
+#   summarise(species_frequency = n_distinct(SPECIES_CO))
+
+```
+
+
+### a RAC test
+```{r}
+
+# filter(inv_date < '2022-06-15')
+# filter(inv_dat == lubridate::today())
+# trees |> filter(parks_to_keep == 1)
+
+park_trees <- trees |> #st_drop_geometry() |> # drops spatial information
+    filter(dbhheight == '4.5ft') |>
+    filter(department == 'Parks' & growspace == 'Yard/Park/Open space')
+
+mapview(parks) + mapview(park_trees)
+
+( # get species abundance and rank
+  abundance_rank_parks <- trees |> 
+    filter(!is.na(`Park Name`)) |> 
+    st_drop_geometry() |> 
+    group_by(Species = species_co) |> 
+    summarise(Abundance = n()) |> 
+    mutate(Rank = rank(-Abundance, ties.method = 'first')
+           , plotname = ifelse(Rank < 11, Species, ''))
+  )
+  
+(
+  rac <- abundance_rank_parks |> 
+    ggplot(aes(Rank, Abundance, label = plotname)) + 
+    geom_point(size = 1) + 
+    geom_line() + 
+    ggrepel::geom_text_repel(max.overlaps = 50, size = 4, nudge_x=15) +
+    labs(
+      title = 'Rank Abundance Curve for Park Trees:'
+      , subtitle = 'New Haven, CT'
+    ) + 
+    theme_bw(16) + 
+    NULL
+  )
+
+
+# WORKS, is *GOOD*
+# # RAC x (select) neighborhood
+# ( # get species abundance and rank
+#   abundance_rank_park <- trees |>
+#     filter(!is.na(`Park Name`)) |> 
+#     filter(parks_to_keep == 1) |> 
+#     st_drop_geometry() |> 
+#     # group_by(holc_grade, Species = species_co) |> # PUT SPECIES LAST
+#     # group_by(neighborhood, Species = species_co) |> # PUT SPECIES LAST
+#     group_by(`Park Name`, Species = species_co) |> # PUT SPECIES LAST
+#     summarise(Abundance = n()) |> 
+#     mutate(Rank = rank(-Abundance, ties.method = 'first')
+#            , plotname = ifelse(Rank < 6, Species, ''))
+#   )
+# 
+# # abundance_rank_park |> tail()
+# 
+# # graph out RAC by HOLC
+# (
+#   rac_select_parks <- abundance_rank_park |> 
+#     ggplot(aes(Rank, Abundance, label = plotname)) + 
+#     geom_line() + 
+#     # geom_point(aes(color = holc_grade), size = 1) + #, shape = 21) +
+#     # geom_point(aes(color = neighborhood), size = 1) + #, shape = 21) + 
+#     geom_point(aes(color = `Park Name`), size = 2) + #, shape = 21) + 
+#     ggrepel::geom_text_repel(max.overlaps = 100, size = 4, nudge_x = 15) +
+#     scale_color_manual(values = holc_pal) + 
+#     theme_bw(16) + 
+#     theme(legend.position = 'none') + 
+#     # facet_wrap(~holc_grade) + 
+#     # facet_wrap(~neighborhood) + 
+#     facet_wrap(~`Park Name`) + 
+#     NULL
+#   )
+
+
+# RAC x parks (select vs all others)
+( # get species abundance and rank
+  abundance_rank_park_vs_all <- trees |>
+    filter(!is.na(`Park Name`)) |> 
+    mutate(park = ifelse(parks_to_keep == 1, `Park Name`, 'all other parks')) |> 
+    st_drop_geometry() |> 
+    # group_by(holc_grade, Species = species_co) |> # PUT SPECIES LAST
+    # group_by(neighborhood, Species = species_co) |> # PUT SPECIES LAST
+    group_by(park, Species = species_co) |> # PUT SPECIES LAST
+    summarise(Abundance = n()) |> 
+    mutate(Rank = rank(-Abundance, ties.method = 'first')
+           , plotname = ifelse(Rank < 6, Species, ''))
+  )
+
+# abundance_rank_park |> tail()
+
+# graph out RAC by HOLC
+(
+  rac_select_parks_all <- abundance_rank_park_vs_all |> 
+    ggplot(aes(Rank, Abundance, label = plotname)) + 
+    geom_line() + 
+    geom_point(aes(color = park), size = 2) + #, shape = 21) + 
+    ggrepel::geom_text_repel(max.overlaps = 100, size = 4, nudge_x = 15) +
+    # scale_color_manual(values = holc_pal) + 
+    theme_bw(16) + 
+    theme(legend.position = 'none') + 
+    facet_wrap(~park) + 
+    NULL
+  )
+
+
+
+
+# RAC x parks (select vs all others)
+( # get species abundance and rank
+  abundance_rank_select_park <- trees |>
+    filter(parks_to_keep == 1) |> 
+    st_drop_geometry() |> 
+    # group_by(holc_grade, Species = species_co) |> # PUT SPECIES LAST
+    # group_by(neighborhood, Species = species_co) |> # PUT SPECIES LAST
+    group_by(`Park Name`, Species = species_co) |> # PUT SPECIES LAST
+    summarise(Abundance = n()) |> 
+    mutate(Rank = rank(-Abundance, ties.method = 'first')
+           , plotname = ifelse(Rank < 6, Species, ''))
+  )
+
+# abundance_rank_park |> tail()
+
+# graph out RAC by HOLC
+(
+  rac_select_parks <- abundance_rank_select_park |> 
+    ggplot(aes(Rank, Abundance, label = plotname)) + 
+    geom_line() + 
+    geom_point(aes(color = `Park Name`), size = 2) + #, shape = 21) + 
+    ggrepel::geom_text_repel(max.overlaps = 100, size = 4, nudge_x = 15) +
+    # scale_color_manual(values = holc_pal) + 
+    theme_bw(16) + 
+    theme(legend.position = 'none') + 
+    facet_wrap(~`Park Name`) + 
+    NULL
+  )
+
+# repeat with trees from THAT day in those parks vs the prviously collected trees
+
+```
+
+End here for MODs
+
+
+
+## D street segments
 ```{r}
 
 # TODO compare Bay Hanson's TreeCount to one generated with a spatial join of new Davey Resource Group trees
-(st <- st_read('input_data/URI_Roads/URI_Roads_No_Highways_Jan2022.shp', as_tibble = TRUE) %>%
-   mutate(road_segment_length_m = as.numeric(st_length(.))))
+(
+  st <- st_read('input_data/URI_Roads/URI_Roads_No_Highways_Jan2022.shp', as_tibble = TRUE) |> 
+    st_transform(crs = st_crs(trees)) |> 
+    dplyr::rename(TreeCount_Bay = TreeCount) %>%
+    mutate(road_segment_length_m = as.numeric(st_length(.))) |> 
+    rowid_to_column('street_id') |> 
+    clean_names() |> 
+    filter(road_segment_length_m > 21) # trim out small segments
+ )
 
 st |> mapview()
 
@@ -151,52 +664,149 @@ st |>
 
 
 st |> filter(road_segment_length_m < 9) |> mapview() # TODO trim more!
+st |> filter(road_segment_length_m < 22) |> mapview() # TODO trim more!
+st |> arrange(road_segment_length_m) |> filter(road_segment_length_m < 22) |> mapview()
 st |> filter(road_segment_length_m > 1200) |> mapview()
 
-```
-
-
-## C Neighborhoods
-```{r}
-
-(neighs <- st_read('input_data/RDS-2021-0104/Data/neighborhoods.shp', as_tibble = TRUE) |> 
-   rename(NBRHOOD = nghbr))
-
-neighs |> mapview(zcol = 'NBRHOOD')
-
-neighs |> distinct(n)
-
-neigh_labs <- neighs |> 
-  select(Neighborhood = NBRHOOD) |> 
-  st_centroid()
+# unique ID?
+dim(st)
+n_distinct(st$street_id)
+length(unique(st$fid_roadsf)) # aack!
+length(unique(st$linearid))   # no
 
 ```
 
-
-## D HOLC polygons
-```{r}
-# '../' means 'up one level'
-(holc <- st_read('../../../BaltimoreGIS/BHall/HOLC_X_Sites/HOLC_NewHaven/shp/HOLC_NewHaven.shp'))
-
-
-holc |> mapview(zcol = 'holc_grade', col.regions = holc_pal)
-
-```
 
 
 
 # 2 joins and tests
 ```{r}
 
+# used for adding demographics from Neighborhood data
 # tabular join to see if neighborhood code in trees and neighborhood file matches
-trees |> left_join(neighs |> st_drop_geometry()) # FIXME
-trees |> anti_join(neighs |> st_drop_geometry()) |> mapview()
-
+trees |> left_join(neighs |> st_drop_geometry(), by = 'neighborhood') # Success
+# trees |> anti_join(neighs |> st_drop_geometry(), by = 'neighborhood') |> mapview() # should be empty!, great
 
 # join street trees to street segments spatially
 # compare Bay's work.
+tictoc::tic(); trees |> 
+  # filter(department == 'Street Tree') |> # street trees only
+  # sample_n(1e4) |> # used for testing
+  st_join(st |> select(street_id, fullname, geoid, tree_count_bay)
+          , left = TRUE
+          , join = nngeo::st_nn, maxdist = 50, k = 1, progress = TRUE, parallel = 8) -> trees_w_st
+tictoc::toc(); beepr::beep() # ~ 256s with just Street Trees, maxdist = 50 and parallel = 8
+
+# # complete matches?
+# trees |> filter(is.na(fullname)) |> mapview() + mapview(st, color = 'black')
+# trees |> filter(is.na(street_id))|> mapview() + mapview(st, color = 'black')
+
+# do the street names look right?
+test |> st_drop_geometry() |> tabyl(street, fullname) # yes, yes they do.
+
+trees |> st_drop_geometry() |> tabyl(nbrhood, neighborhood)
+
+```
+
+get top species per HOLC grade
+
+# 3 community ecology metrics
+## A RAC
+```{r}
+
+( # get species abundance and rank
+  abundance_rank <- trees_w_st |> 
+    st_drop_geometry() |> 
+    group_by(Species = species_co) |> 
+    summarise(Abundance = n()) |> 
+    mutate(Rank = rank(-Abundance, ties.method = 'first')
+           , plotname = ifelse(Rank < 11, Species, ''))
+  )
+  
+(
+  rac <- abundance_rank |> 
+    ggplot(aes(Rank, Abundance, label = plotname)) + 
+    geom_point(size = 1) + 
+    geom_line() + 
+    ggrepel::geom_text_repel(max.overlaps = 50, size=2.5, nudge_x=15) +
+    theme_bw(16) + 
+    NULL
+  )
 
 
+# RAC x HOLC
+( # get species abundance and rank
+  abundance_rank_holc <- trees_w_st |> 
+    st_drop_geometry() |> 
+    group_by(holc_grade, Species = species_co) |> # PUT SPECIES LAST
+    summarise(Abundance = n()) |> 
+    mutate(Rank = rank(-Abundance, ties.method = 'first')
+           , plotname = ifelse(Rank < 6, Species, ''))
+  )
+
+# # 2x check
+# abundance_rank_holc |> 
+#   filter(holc_grade == 'A') |> 
+#   arrange(Rank, Abundance)
+
+# graph out RAC by HOLC
+(
+  rac_holc <- abundance_rank_holc |> 
+    ggplot(aes(Rank, Abundance, label = plotname)) + 
+    geom_line() + 
+    geom_point(aes(color = holc_grade), size = 1) + #, shape = 21) + 
+    ggrepel::geom_text_repel(max.overlaps = 100, size = 3, nudge_x = 15) +
+    scale_color_manual(values = holc_pal) + 
+    theme_bw(16) + 
+    theme(legend.position = 'none') + 
+    facet_wrap(~holc_grade) + 
+    NULL
+  )
+
+
+# ggsave(file = paste0(getwd(), '/figures/XX_', Sys.Date(), '.png'),
+#        height = 3*2, width = 6.5*2, dpi = 450)
+
+
+```
+
+## B species accumulation curves
+```{r}
+
+trees_w_st |> dim()
+n_distinct(trees_w_st$id)
+
+x <- trees_w_st |> 
+  st_drop_geometry() |> 
+  filter(!is.na(street_id)) |> 
+  select(#id, 
+    street_id, species_bo
+    ) |>
+  mutate(abundance = 1) |> 
+  pivot_wider(  id_cols = street_id
+              , names_from = 'species_bo'
+              , values_from = abundance
+              , values_fn = list(abundance = sum)
+              , values_fill = 0) |> 
+  clean_names() |> 
+  column_to_rownames(var = 'street_id')
+
+
+tictoc::tic(); out.all<- iNEXT(x, q=c(0,1,2),datatype="abundance"); tictoc::toc() # 164.696 sec elapsed
+out.all$DataInfo # showing basic data information.
+out.all$AsyEst # showing asymptotic diversity estimates.
+out.all$iNextEst # showing diversity estimates with rarefied and extrapolated.
+
+qlabels <- c("0" = "richness (q=0)", "1" = "Shannon's EFN (q=1)","2" = "Simpson's EFN (q=2)")
+
+accum_alltree_all_q<-ggiNEXT(out.all, type=1, facet.var="order") + theme_bw(base_size=10)+ theme_bw(base_size=10)+ xlim(c(0,20000))+scale_colour_manual(values = holc_col,name="HOLC grade")+scale_fill_manual(values = holc_col, name="HOLC grade")+
+  labs(x = "Number of individual trees sampled", y = "Tree species diversity", colour = "HOLC grade", shape = "HOLC grade", fill="HOLC grade")+
+  theme(legend.position="bottom",legend.title=element_blank())+facet_wrap(~order, scales="free",labeller=labeller(order = qlabels))
+
+
+tictoc::tic()
+size_rare_estD <- iNEXT::estimateD(x, datatype = "abundance", base = "size", level = NULL,conf = 0.95); tictoc::toc()
+print(size_rare_estD)
 ```
 
 
